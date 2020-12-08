@@ -99,8 +99,8 @@ const circle = {
   x: width / 2 ,
   y: height / 2, 
   r: 10,
-  dx: 4,
-  dy: 5
+  dx: 0,
+  dy: 0
 };
 scor=0
 function score(){
@@ -223,6 +223,10 @@ function update() {
 update();
 
 function moveleft(){
+  if(circle.dx == 0){
+    circle.dx=4;
+    circle.dy=5;
+  }
   paddle.x -= paddle.dx;
   if (paddle.x <0){
     paddle.x = 0;
@@ -230,6 +234,10 @@ function moveleft(){
 }
 
 function moveright(){
+  if(circle.dx == 0){
+  circle.dx=4;
+  circle.dy=5;
+  }
   paddle.x += paddle.dx;
   if (paddle.x+paddle.w>width){
     paddle.x=width-paddle.w;
