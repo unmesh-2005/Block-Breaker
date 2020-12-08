@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Game</title>
+  <style>
+    body{
+  background-color: black;
+}
+canvas{
+  margin-left:4%;
+  margin-top:10%;
+  background-color: white;
+}
+
+#ml{
+  text-align:center;
+  border:none;
+  background-color:white;
+  font-size:30pt;
+  width:4em;
+  height:3em;
+}
+
+#mr{
+  text-align:center;
+  border:none;
+  background-color:white;
+  font-size:30pt;
+  width:4em;
+  height:3em;
+}
+  </style>
+</head>
+
+<body>
+  <!-- Project -->
+  
+  
+  <canvas id="canvas" width="350" height="350"></canvas>
+  <br>
+    <center>
+  <button id="ml" onclick="moveleft();"><</button>
+  <button id="mr" onclick="moveright();">></button>
+  </center>
+    <script>
+const canvas=document.getElementById("canvas");
+const width = canvas.width;
+const height = canvas.height
+const ctx = canvas.getContext("2d");
+
+const brick={
+  x:5,
+  y:1,
+  w:30,
+  h:10
+};
+function bricks(y){
+  for (brick.x;brick.x<320;brick.x+=31){
+    ctx.beginPath();
+    ctx.rect(brick.x,y,brick.w,brick.h);
+    ctx.fill();
+  }
+  brick.x=5;
+}
+
+const px = [];
+for (brick.x;brick.x<320;brick.x+=31){
+  px.push(brick.x);
+}
+const py = [brick.y,brick.y+11,brick.y+22];
+
+const vis=[[],[],[]];
+for (var a = 0; a<3; a++){
+  for(var b =0; b<11; b++){
+    vis[a][b]=true;
+  }
+}
+const paddle = {
+  x: width / 2,
+  y: height,
+  w: 100,
+  h: 10,
+  dx: 30
+};
+
+function padle() {
+  ctx.beginPath();
+  ctx.rect(paddle.x, paddle.y - paddle.h, paddle.w, paddle.h);
+  ctx.fillStyle = "cyan";
+  ctx.fill();
+  ctx.closePath();
+}
+
+const circle = {
+  x: width / 2 ,
+  y: height / 2, 
+  r: 10,
+  dx: 4,
+  dy: 5
+};
+scor=0
+function score(){
+  scor=0;
+  for(a=0;a<3;a++){
+    for(b=0;b<11;b++){
+      if(vis[a][b]==false){
+        scor+=1;
+      }
+    }
+  }
+  if(scor == 33){
+    document.location.reload();
+    document.write("<style>body {background-color: black;}.show {margin-top: 60%;font-size: 20pt;color: cyan;}</style><center class='show'><p>Game Over</p><p>You Win😎</p></center>");
+  }
+}
+
+function draw() {
+  ctx.beginPath();
+  ctx.fillStyle = "cyan";
+  ctx.arc(circle.x, circle.y, circle.r, 0, Math.PI * 2, true);
+  ctx.fill();
+}
+
+function rowO(){
+ if ((circle.y + circle.r) < (1+brick.h*2)) {
+    for (a in px) {
+      if (circle.x > px[a] && circle.x < (brick.w + px[a])) {
+        if(vis[0][a] != false && circle.dy < 0){
+          circle.dy *= -1;
+          
+        }
+        
+        vis[0][a] = false;
+        
+      }
+    }
+  }
+}
+
+function rowT() {
+  if ((circle.y + circle.r) < (brick.h*2+11)) {
+    for (a in px) {
+      if (circle.x > px[a] && circle.x < (brick.w + px[a])) {
+        if(vis[1][a] != false && circle.dy < 0){
+          circle.dy *= -1;
+          
+        }
+        
+        vis[1][a] = false;
+      }
+    }
+  }
+}
+
+function rowTh() {
+  if ((circle.y + circle.r) < (brick.h*2+22)) {
+    for (a in px) {
+      if (circle.x > px[a] && circle.x < (brick.w + px[a])) {
+        if (vis[2][a] != false && circle.dy < 0) {
+          circle.dy *= -1;
+          
+        }
+        
+        vis[2][a] = false;
+      }
+    }
+  }
+}
+function show(){
+  for(p=0;p<3;p++){
+    for(q=0;q<11;q++){
+      if(vis[p][q]==false){
+        ctx.clearRect(px[q],py[p],brick.w,brick.h);
+        
+      }
+    }
+  }
+}
+
+function dis(){
+  document.location.reload();
+  document.write("<style>body {background-color: black;}.show {margin-top: 60%;font-size: 20pt;color: cyan;}</style><center class='show'><p>Game Over</p><p>your score is:"+scor+"</p></center>");
+}
+function update() {
+  ctx.clearRect(0,0,width,height);
+  padle();
+  bricks(1);
+  bricks(12);
+  bricks(23);
+  show();
+  draw();
+  circle.x += circle.dx;
+  circle.y += circle.dy
+  if (circle.x + circle.r > width || circle.x - circle.r < 0)
+  {
+    circle.dx *= -1;
+  }
+  if (circle.y - circle.r < 0)
+  {
+    circle.dy *= -1;
+  }
+  
+  if(circle.y + circle.r > height){
+    dis();
+  }
+  
+  rowO();
+  rowT();
+  rowTh();
+  
+  
+  if ((circle.y + circle.r) >= paddle.y - paddle.h && (circle.x + circle.r) > paddle.x && (circle.x - circle.r) < (paddle.x + paddle.w)) {
+    if (circle.dy > 0) {
+      circle.dy *= -1;
+    }
+  }
+  requestAnimationFrame(update);
+}
+update();
+
+function moveleft(){
+  paddle.x -= paddle.dx;
+  if (paddle.x <0){
+    paddle.x = 0;
+  }
+}
+
+function moveright(){
+  paddle.x += paddle.dx;
+  if (paddle.x+paddle.w>width){
+    paddle.x=width-paddle.w;
+  }
+}
+
+    </script>
+  
+</body>
+</html>
