@@ -209,7 +209,7 @@
       
       function dis(){
         game_state.game_over=true;
-        document.getElementById("cont").innerHTML = "<p>Game Over</p><p>your score is:"+scor+"</p>";
+        document.getElementById("cont").innerHTML = "<p>Game Over</p><p>your score is:"+game_state.scor+"</p>";
       }
       function moveleft() {
         if (circle.dx == 0) {
